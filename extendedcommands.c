@@ -44,7 +44,7 @@
 #include "kyle.h"
 #include "device_config.h"
 int signature_check_enabled = 1;
-int script_assert_enabled = 1;
+int script_assert_enabled = 0;
 static const char *SDCARD_UPDATE_FILE = "/sdcard/update.zip";
 
 int
@@ -1306,7 +1306,6 @@ void show_advanced_menu()
     };
 
     static char* list[] = { "reboot recovery",
-			    "reboot bootloader",
                             "wipe dalvik cache",
                             "report error",
                             "key test",
@@ -1340,9 +1339,6 @@ void show_advanced_menu()
                 android_reboot(ANDROID_RB_RESTART2, 0, "recovery");
                 break;
             case 1:
-                android_reboot(ANDROID_RB_RESTART2, 0, "bootlaoader");
-                break;
-            case 2:
                 if (0 != ensure_path_mounted("/data"))
                     break;
                 ensure_path_mounted("/sd-ext");
@@ -1355,10 +1351,10 @@ void show_advanced_menu()
                 }
                 ensure_path_unmounted("/data");
                 break;
-            case 3:
+            case 2:
                 handle_failure(1);
                 break;
-            case 4:
+            case 3:
             {
                 ui_print("Outputting key codes.\n");
                 ui_print("Go back to end debugging.\n");
@@ -1373,10 +1369,10 @@ void show_advanced_menu()
                 while (action != GO_BACK);
                 break;
             }
-            case 5:
+            case 4:
                 ui_printlogtail(12);
                 break;
-            case 6:
+            case 5:
                 ensure_path_mounted("/system");
                 ensure_path_mounted("/data");
                 ensure_path_mounted("/sdcard");
@@ -1384,20 +1380,20 @@ void show_advanced_menu()
                 __system("fix_permissions");
                 ui_print("Done!\n");
                 break;
-	    case 7:
+	    case 6:
                	ensure_path_mounted("/system");
                 ensure_path_mounted("/data");
                 ui_print("Fixing permissions & removing stale directories (logging disabled)...\n");
                 __system("fix_permissions -l -r");
                 ui_print("Done!\n");
 		break;
-            case 8:
+            case 7:
                 partition_sdcard("/sdcard");
                 break;
-            case 9:
+            case 8:
                 partition_sdcard("/external_sd");
                 break;
-            case 10:
+            case 9:
                 partition_sdcard("/emmc");
                 break;
       }

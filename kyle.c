@@ -144,7 +144,6 @@ int check_for_script_file(const char* ors_boot_script)
         ret_val = 0;
         LOGI("Script file found: '%s'\n", ors_boot_script);
         fclose(fp);
-        __system("ors-mount.sh");
         // Copy script file to /tmp
         strcpy(exec, "cp ");
         strcat(exec, ors_boot_script);
@@ -942,7 +941,6 @@ void show_extras_menu()
 		break;
 	    case 6:
                 {
-                    __system("ors-mount.sh");
                     //search in default ors path
                     choose_default_ors_menu("/sdcard");
                     if (browse_for_file == 0) {
