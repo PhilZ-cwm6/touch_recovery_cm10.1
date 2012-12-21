@@ -499,7 +499,6 @@ int control_usb_storage_for_lun(Volume* vol, bool enable) {
 #ifdef BOARD_UMS_LUNFILE
         BOARD_UMS_LUNFILE,
 #endif
-	"/sys/devices/platform/msm_hsusb/gadget/lun0/file",
         "/sys/devices/platform/usb_mass_storage/lun%d/file",
         "/sys/class/android_usb/android0/f_mass_storage/lun/file",
         "/sys/class/android_usb/android0/f_mass_storage/lun_ex/file",
@@ -917,7 +916,7 @@ void show_partition_menu()
         if (chosen_item == GO_BACK)
             break;
         if (chosen_item == (mountable_volumes+formatable_volumes)) {
-	    if (!is_data_media()) {
+            if (!is_data_media()) {
                 show_mount_usb_storage_menu();
             }
             else {
@@ -1314,8 +1313,21 @@ void show_advanced_menu()
                             "show log",
                             "fix permissions",
 			    "sk8's fix permissions",
+			    "partition sdcard",
+			    "partition external sdcard",
+			    "partition internal sdcard",
                             NULL
     };
+
+    if (!can_partition("/sdcard")) {
+        list[8] = NULL;
+    }
+    if (!can_partition("/external_sd")) {
+        list[9] = NULL;
+    }
+    if (!can_partition("/emmc")) {
+        list[10] = NULL;
+    }
 
     for (;;)
     {
@@ -1379,6 +1391,15 @@ void show_advanced_menu()
                 __system("fix_permissions -l -r");
                 ui_print("Done!\n");
 		break;
+            case 8:
+                partition_sdcard("/sdcard");
+                break;
+            case 9:
+                partition_sdcard("/external_sd");
+                break;
+            case 10:
+                partition_sdcard("/emmc");
+                break;
       }
    }
 }
