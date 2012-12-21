@@ -1,5 +1,10 @@
 #!/sbin/sh
-# *** Thanks to PhilZ for this! *** #
+
+#######################################
+# Do not remove this credits header #
+# sk8erwitskil : first release #
+# PhilZ-cwm6 : multi device support #
+#######################################
 
 BOOT_PATH=`cat /etc/recovery.fstab | grep -v "#" | grep /boot | awk '{print $3}'`;
 

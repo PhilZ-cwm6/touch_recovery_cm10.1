@@ -1,9 +1,12 @@
 #!/sbin/sh
-# *** Thanks to PhilZ for this! *** #
+
+#######################################
+# Do not remove this credits header #
+# sk8erwitskil : first release #
+# PhilZ-cwm6 : multi device support #
+#######################################
 
 MISC_PATH=`cat /etc/recovery.fstab | grep -v "#" | grep /misc | awk '{print $3}'`;
-
-mkdir -p "$1"/clockworkmod/.miscbackup/;
 
 echo "">>"$1"/clockworkmod/.miscbackup/log.txt;
 echo "Restore $1/clockworkmod/.miscbackup/misc.img to $MISC_PATH">>"$1"/clockworkmod/.miscbackup/log.txt;

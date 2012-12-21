@@ -42,7 +42,7 @@
 #include "bmlutils/bmlutils.h"
 #include "cutils/android_reboot.h"
 #include "kyle.h"
-
+#include "device_config.h"
 int signature_check_enabled = 1;
 int script_assert_enabled = 1;
 static const char *SDCARD_UPDATE_FILE = "/sdcard/update.zip";
@@ -499,6 +499,7 @@ int control_usb_storage_for_lun(Volume* vol, bool enable) {
 #ifdef BOARD_UMS_LUNFILE
         BOARD_UMS_LUNFILE,
 #endif
+	"/sys/devices/platform/msm_hsusb/gadget/lun0/file",
         "/sys/devices/platform/usb_mass_storage/lun%d/file",
         "/sys/class/android_usb/android0/f_mass_storage/lun/file",
         "/sys/class/android_usb/android0/f_mass_storage/lun_ex/file",
@@ -900,19 +901,17 @@ void show_partition_menu()
             options[mountable_volumes+i] = e->txt;
         }
 
-//#ifndef RECOVERY_DATAMEDIA_AND_SDCARD
+	// CREDIT: PhilZ
+        //Mount usb storage support for /data/media devices, by PhilZ (part 1/2)
         if (!is_data_media()) {
-          options[mountable_volumes + formatable_volumes] = "mount USB storage";
-          options[mountable_volumes + formatable_volumes + 1] = NULL;
+            options[mountable_volumes + formatable_volumes] = "mount USB storage";
+            options[mountable_volumes + formatable_volumes + 1] = NULL;
+        } else {
+            options[mountable_volumes + formatable_volumes] = "format /data and /data/media (/sdcard)";
+            options[mountable_volumes + formatable_volumes + 1] = "mount USB storage";
+            options[mountable_volumes + formatable_volumes + 2] = NULL;
         }
-        else {
-          options[mountable_volumes + formatable_volumes] = "format /data and /data/media (/sdcard)";
-          options[mountable_volumes + formatable_volumes + 1] = NULL;
-        }
-//#else
-//	 options[mountable_volumes + formatable_volumes] = "mount USB storage";
-//         options[mountable_volumes + formatable_volumes + 1] = NULL;
-//#endif
+        //end PhilZ support for mount usb storage on /data/media (part 1/2)
 
         int chosen_item = get_menu_selection(headers, &options, 0, 0);
         if (chosen_item == GO_BACK)
@@ -933,6 +932,12 @@ void show_partition_menu()
                 handle_data_media_format(0);
             }
         }
+	// CREDIT: PhilZ
+        //Mount usb storage support for /data/media devices, by PhilZ (part 2/2)
+        else if (is_data_media() && chosen_item == (mountable_volumes+formatable_volumes+1)) {
+            show_mount_usb_storage_menu();
+        }
+        //end PhilZ support for mount usb storage on /data/media
         else if (chosen_item < mountable_volumes) {
             MountMenuEntry* e = &mount_menu[chosen_item];
             Volume* v = e->v;
@@ -1302,7 +1307,7 @@ void show_advanced_menu()
     };
 
     static char* list[] = { "reboot recovery",
-			    "reboot download",
+			    "reboot bootloader",
                             "wipe dalvik cache",
                             "report error",
                             "key test",
@@ -1323,7 +1328,7 @@ void show_advanced_menu()
                 android_reboot(ANDROID_RB_RESTART2, 0, "recovery");
                 break;
             case 1:
-                android_reboot(ANDROID_RB_RESTART2, 0, "download");
+                android_reboot(ANDROID_RB_RESTART2, 0, "bootlaoader");
                 break;
             case 2:
                 if (0 != ensure_path_mounted("/data"))
