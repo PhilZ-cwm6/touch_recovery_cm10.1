@@ -251,6 +251,7 @@ static void draw_virtualkeys_locked()
     int iconY = (gr_fb_height() - iconHeight);
     gr_blit(surface, 0, 0, iconWidth, iconHeight, iconX, iconY);
 }
+#endif
 
 #define LEFT_ALIGN 0
 #define CENTER_ALIGN 1
@@ -275,13 +276,14 @@ static void draw_text_line(int row, const char* t, int align) {
         gr_text(col, (row+1)*CHAR_HEIGHT-1, t);
     }
 }
-#else
-static void draw_text_line(int row, const char* t) {
+
+/*static void draw_text_line(int row, const char* t) {
   if (t[0] != '\0') {
     gr_text(0, (row+1)*CHAR_HEIGHT-1, t);
   }
 }
 #endif
+*/
 
 //#define MENU_TEXT_COLOR 255, 160, 49, 255
 #define MENU_TEXT_COLOR 0, 191, 255, 255 //blue
@@ -311,12 +313,22 @@ static void draw_screen_locked(void)
         if (show_menu) {
 #ifndef BOARD_TOUCH_RECOVERY
             gr_color(MENU_TEXT_COLOR);
+            int batt_level = 0;
+            batt_level = get_batt_stats();
+            if (batt_level < 21) {
+                gr_color(255, 0, 0, 255);
+            }
+            char batt_text[40];
+            sprintf(batt_text, "[%d%%]", batt_level);
+            draw_text_line(0, batt_text, RIGHT_ALIGN);
+
+            gr_color(MENU_TEXT_COLOR);
             gr_fill(0, (menu_top + menu_sel - menu_show_start) * CHAR_HEIGHT,
                     gr_fb_width(), (menu_top + menu_sel - menu_show_start + 1)*CHAR_HEIGHT+1);
 
             gr_color(HEADER_TEXT_COLOR);
             for (i = 0; i < menu_top; ++i) {
-                draw_text_line(i, menu[i]);
+                draw_text_line(i, menu[i], LEFT_ALIGN);
                 row++;
             }
 
@@ -329,11 +341,11 @@ static void draw_screen_locked(void)
             for (i = menu_show_start + menu_top; i < (menu_show_start + menu_top + j); ++i) {
                 if (i == menu_top + menu_sel) {
                     gr_color(255, 255, 255, 255);
-                    draw_text_line(i - menu_show_start , menu[i]);
+                    draw_text_line(i - menu_show_start , menu[i], LEFT_ALIGN);
                     gr_color(MENU_TEXT_COLOR);
                 } else {
                     gr_color(MENU_TEXT_COLOR);
-                    draw_text_line(i - menu_show_start, menu[i]);
+                    draw_text_line(i - menu_show_start, menu[i], LEFT_ALIGN);
                 }
                 row++;
                 if (row >= max_menu_rows)
@@ -358,7 +370,7 @@ static void draw_screen_locked(void)
 
         int r;
         for (r = 0; r < (available_rows < MAX_ROWS ? available_rows : MAX_ROWS); r++) {
-            draw_text_line(start_row + r, text[(cur_row + r) % MAX_ROWS]);
+            draw_text_line(start_row + r, text[(cur_row + r) % MAX_ROWS], LEFT_ALIGN);
         }
     }
 }
