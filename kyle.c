@@ -612,7 +612,7 @@ static void special_restore_handler(const char* script_cmd, const char* backup_p
     static char* headers_boot[] = {"Select a kernel image", "", NULL};
     static char* headers_efs[] = {"Restore EFS Image", "", NULL};
     static char* headers_misc[] = {"Select a MISC image", "", NULL};
-    static char **image_extension;
+    static char *image_extension = NULL;
 
     if (boot_bak) {
         headers = headers_boot;
