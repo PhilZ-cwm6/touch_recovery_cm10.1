@@ -842,6 +842,9 @@ void show_extras_menu()
 			    "create custom zip (BETA)",
 			    "run custom openrecoveryscript",
 			    "recovery info",
+#ifdef BOARD_HAS_REMOVABLE_STORAGE
+			    "set android_secure internal/external",
+#endif
                             NULL };
 
     for (;;)
@@ -877,18 +880,6 @@ void show_extras_menu()
                    ui_print("nandroid progress will be hidden\n");
                 }
                 break;
-/*
-	    case 4:
-                ensure_path_mounted("/sdcard");
-                if( access("/sdcard/clockworkmod/.is_as_external", F_OK ) != -1 ) {
-                   __system("rm -rf /sdcard/clockworkmod/.is_as_external");
-                   ui_print("android_secure will be set to internal\n");
-                } else {
-                   __system("touch /sdcard/clockworkmod/.is_as_external");
-                   ui_print("android_secure will be set to external\n");
-                }
-                break;
-*/
 	    case 4:
                 //we mount sdcards so that they can be accessed when in aroma file manager gui
                 if (volume_for_path("/sdcard") != NULL) {
@@ -979,6 +970,18 @@ void show_extras_menu()
                 //ui_print(EXPAND(BUILD_DATE)"\n");
                 ui_print("Build Date: %s at %s\n", __DATE__, __TIME__);
 		//ui_print("Build Date: 12/17/2012 6:20 pm\n");
+#ifdef BOARD_HAS_REMOVABLE_STORAGE
+	    case 8:
+                ensure_path_mounted("/sdcard");
+                if( access("/sdcard/clockworkmod/.is_as_external", F_OK ) != -1 ) {
+                   __system("rm -rf /sdcard/clockworkmod/.is_as_external");
+                   ui_print("android_secure will be set to internal\n");
+                } else {
+                   __system("touch /sdcard/clockworkmod/.is_as_external");
+                   ui_print("android_secure will be set to external\n");
+                }
+                break;
+#endif
 	}
     }
 }

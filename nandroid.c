@@ -384,6 +384,7 @@ int nandroid_backup(const char* backup_path)
             return ret;
     }
 
+#ifdef BOARD_HAS_REMOVABLE_STORAGE
     ensure_path_mounted("/sdcard");
     if( access( "/sdcard/clockworkmod/.is_as_external", F_OK ) != -1) {
         ensure_path_mounted("/external_sd");
@@ -397,6 +398,7 @@ int nandroid_backup(const char* backup_path)
                 return ret;
         }
     } else {
+#endif
         ensure_path_mounted("/sdcard");
         if (0 != stat("/sdcard/.android_secure", &s))
         {
@@ -407,8 +409,9 @@ int nandroid_backup(const char* backup_path)
             if (0 != (ret = nandroid_backup_partition_extended(backup_path, "/sdcard/.android_secure", 0)))
                 return ret;
         }
+#ifdef BOARD_HAS_REMOVABLE_STORAGE
     }
-
+#endif
     if (0 != (ret = nandroid_backup_partition_extended(backup_path, "/cache", 0)))
         return ret;
 
@@ -735,17 +738,20 @@ int nandroid_restore(const char* backup_path, int restore_boot, int restore_syst
     }
 
     ensure_path_mounted("/sdcard");
+#ifdef BOARD_HAS_REMOVABLE_STORAGE
     if( access( "/sdcard/clockworkmod/.is_as_external", F_OK ) != -1) {
         if (restore_data && 0 != (ret = nandroid_restore_partition_extended(backup_path, "/external_sd/.android_secure", 0))) {
             return ret;
         }
     }
     else {
+#endif
         if (restore_data && 0 != (ret = nandroid_restore_partition_extended(backup_path, "/sdcard/.android_secure", 0))) {
             return ret;
         }
+#ifdef BOARD_HAS_REMOVABLE_STORAGE
     }
-
+#endif
     if (restore_cache && 0 != (ret = nandroid_restore_partition_extended(backup_path, "/cache", 0)))
         return ret;
 

@@ -668,13 +668,17 @@ void wipe_data(int confirm) {
     }
     erase_volume("/sd-ext");
     ensure_path_mounted("/sdcard");
+#ifdef BOARD_HAS_REMOVABLE_STORAGE
     ensure_path_mounted("/external_sd");
     if( access( "/sdcard/clockworkmod/.is_as_external", F_OK ) != -1) {
 	erase_volume("/external_sd/.android_secure");
     }
     else {
+#endif
 	erase_volume("/sdcard/.android_secure");
+#ifdef BOARD_HAS_REMOVABLE_STORAGE
     }
+#endif
     ui_print("Data wipe complete.\n");
     ensure_path_mounted("/data");
     ensure_path_mounted("/sdcard");

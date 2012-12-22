@@ -154,6 +154,7 @@ Value* FormatFn(const char* name, State* state, int argc, Expr* argv[]) {
             return StringValue(strdup(""));
         }
     	ensure_path_mounted("/sdcard");
+#ifdef BOARD_HAS_REMOVABLE_STORAGE
     	ensure_path_mounted("/external_sd");
 	if( access( "/sdcard/clockworkmod/.is_as_external", F_OK ) != -1) {
 	    if (0 != format_volume("/external_sd/.android_secure")) {
@@ -162,11 +163,14 @@ Value* FormatFn(const char* name, State* state, int argc, Expr* argv[]) {
             }
 	}
 	else {
+#endif
             if (0 != format_volume("/sdcard/.android_secure")) {
                 free(path);
                 return StringValue(strdup(""));
             }
+#ifdef BOARD_HAS_REMOVABLE_STORAGE
 	}
+#endif
     }
 
 done:
