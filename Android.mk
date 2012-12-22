@@ -191,7 +191,7 @@ LOCAL_MODULE_PATH := $(TARGET_RECOVERY_ROOT_OUT)/sbin
 LOCAL_SRC_FILES := killrecovery.sh
 include $(BUILD_PREBUILT)
 
-ifeq ($(TARGET_PRODUCT), cm_mako)
+ifeq ($(BOARD_HAS_MISC), true)
 include $(CLEAR_VARS)
 LOCAL_MODULE := backup-misc.sh
 LOCAL_MODULE_TAGS := optional
@@ -207,9 +207,8 @@ LOCAL_MODULE_CLASS := RECOVERY_EXECUTABLES
 LOCAL_MODULE_PATH := $(TARGET_RECOVERY_ROOT_OUT)/sbin
 LOCAL_SRC_FILES := restore-misc.sh
 include $(BUILD_PREBUILT)
-endif
 
-ifeq ($(TARGET_PRODUCT), cm_skyrocket)
+else ifeq ($(BOARD_HAS_EFS), true)
 include $(CLEAR_VARS)
 LOCAL_MODULE := backup-efs.sh
 LOCAL_MODULE_TAGS := optional
@@ -227,7 +226,6 @@ LOCAL_SRC_FILES := restore-efs.sh
 include $(BUILD_PREBUILT)
 endif
 
-
 include $(CLEAR_VARS)
 LOCAL_MODULE := create_update_zip.sh
 LOCAL_MODULE_TAGS := optional
@@ -243,6 +241,16 @@ LOCAL_MODULE_CLASS := RECOVERY_EXECUTABLES
 LOCAL_MODULE_PATH := $(TARGET_RECOVERY_ROOT_OUT)/sbin
 LOCAL_SRC_FILES := change_ba.sh
 include $(BUILD_PREBUILT)
+
+ifeq ($(INCLUDE_ORS_MOUNT), true)
+include $(CLEAR_VARS)
+LOCAL_MODULE := ors-mount.sh
+LOCAL_MODULE_TAGS := optional
+LOCAL_MODULE_CLASS := RECOVERY_EXECUTABLES
+LOCAL_MODULE_PATH := $(TARGET_RECOVERY_ROOT_OUT)/sbin
+LOCAL_SRC_FILES := ors-mount.sh
+include $(BUILD_PREBUILT)
+endif
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := kernel-backup.sh
